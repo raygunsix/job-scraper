@@ -3,6 +3,13 @@ import requests
 
 from bs4 import BeautifulSoup
 
+
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) ' \
+    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 ' \
+    'Safari/537.36'}
+
+
 def read_career_pages(file_path):
     with open(file_path, mode='r') as file:
         reader = csv.reader(file)
@@ -21,7 +28,7 @@ def scrape_jobs(pages, keywords):
 
         print(f"Checking {org}")
 
-        response = requests.get(url)
+        response = requests.get(url, headers=HEADERS)
         soup = BeautifulSoup(response.content, 'html.parser')
 
         findings = soup.find_all(string=keywords)
