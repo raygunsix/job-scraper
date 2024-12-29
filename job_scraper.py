@@ -31,8 +31,15 @@ def scrape_jobs(pages, keywords):
 
     return jobs
 
+def display_jobs(jobs):
+    print()
+    for job in jobs:
+        print(f"{job[0]} jobs found:", *job[2], sep='\n- ')
+        print()
+    return None
+
 if __name__ == "__main__":
     pages = read_career_pages('pages.csv')
     keywords = read_keywords('keywords.csv')
     jobs = scrape_jobs(pages, keywords)
-    print(jobs)
+    display_jobs(jobs)
