@@ -1,13 +1,6 @@
 import csv
-import requests
-
+from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
-
-
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) ' \
-    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 ' \
-    'Safari/537.36'}
 
 
 def read_career_pages(file_path):
@@ -22,19 +15,26 @@ def read_keywords(file_path):
 
 def scrape_jobs(pages, keywords):
     jobs = []
-    for page in pages:
-        org = page[0]
-        url = page[1]
-
-        print(f"Checking {org}")
-
-        response = requests.get(url, headers=HEADERS)
-        soup = BeautifulSoup(response.content, 'html.parser')
-
-        findings = soup.find_all(string=keywords)
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
         
-        if findings:
-            jobs.append([org, url, findings])
+        for page_info in pages:
+            org = page_info[0]
+            url = page_info[1]
+
+            print(f"Checking {org}")
+
+            page.goto(url)
+            content = page.content()
+            soup = BeautifulSoup(content, 'html.parser')
+
+            findings = soup.find_all(string=keywords)
+            
+            if findings:
+                jobs.append([org, url, findings])
+        
+        browser.close()
 
     return jobs
 

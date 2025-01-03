@@ -34,7 +34,11 @@ Example:
 ### Dependencies
 
 Install the required Python modules:
-
 ```
 pip install -r requirements.txt
+```
+
+Install Playwright:
+```
+playwright install
 ```
