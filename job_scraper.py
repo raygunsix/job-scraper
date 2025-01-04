@@ -9,9 +9,12 @@ def read_career_pages(file_path):
         return list(reader)
 
 def read_keywords(file_path):
+    keywords = []
     with open(file_path, mode='r') as file:
         reader = csv.reader(file)
-        return list(reader)
+        for row in reader:
+            keywords.append(row[0])
+        return keywords
 
 def scrape_jobs(pages, keywords):
     jobs = []
@@ -26,13 +29,20 @@ def scrape_jobs(pages, keywords):
             print(f"Checking {org}")
 
             page.goto(url)
+            page.wait_for_timeout(3000)
             content = page.content()
-            soup = BeautifulSoup(content, 'html.parser')
 
-            findings = soup.find_all(string=keywords)
+            soup = BeautifulSoup(content, 'html.parser')
+            text = soup.get_text()
             
-            if findings:
-                jobs.append([org, url, findings])
+            matches = []
+
+            for keyword in keywords:
+                if keyword in text:
+                    matches.append(keyword)
+
+            if matches:        
+                jobs.append([org, url, matches])
         
         browser.close()
 
