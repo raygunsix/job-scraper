@@ -1,12 +1,23 @@
 import csv
+import sys
+
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
 
 def read_career_pages(file_path):
+    pages = []
     with open(file_path, mode='r') as file:
         reader = csv.reader(file)
-        return list(reader)
+        for row in reader:
+            try:
+                org = row[0]
+                url = row[1]
+                pages.append([org, url])
+            except IndexError:
+                print("Error reading career pages csv file. Exiting")
+                sys.exit(1)
+    return pages
 
 def read_keywords(file_path):
     keywords = []
